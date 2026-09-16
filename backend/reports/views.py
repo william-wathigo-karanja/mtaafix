@@ -75,3 +75,5 @@ class ReportViewSet(viewsets.ModelViewSet):
 
         serializer = ReportDetailSerializer(report)
         return Response(serializer.data)
+
+   
