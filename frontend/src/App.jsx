@@ -1,9 +1,25 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import IssueList from './pages/IssueList'
+import IssueMap from './pages/IssueMap'
+import ReportIssue from './pages/ReportIssue'
+import Register from './pages/Register'
+
 function App() {
   return (
-    <div className="container mt-5">
-      <h1>MtaaFix</h1>
-      <p className="text-muted">Report. Track. Improve.</p>
-    </div>
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/issues" element={<IssueList />} />
+        <Route path="/map" element={<IssueMap />} />
+        <Route path="/report" element={<ReportIssue />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
