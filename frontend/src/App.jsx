@@ -7,6 +7,7 @@ import IssueMap from './pages/IssueMap'
 import ReportIssue from './pages/ReportIssue'
 import Register from './pages/Register'
 import ProtectedRoute from './components/ProtectedRoute'
+import MyReports from './pages/MyReports'
 
 function App() {
   return (
@@ -26,6 +27,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+           path="/my-reports"
+           element={
+             <ProtectedRoute>
+              <MyReports />
+             </ProtectedRoute>
+           }
+        />
+
       </Routes>
     </BrowserRouter>
   )
