@@ -6,6 +6,7 @@ import IssueList from './pages/IssueList'
 import IssueMap from './pages/IssueMap'
 import ReportIssue from './pages/ReportIssue'
 import Register from './pages/Register'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   return (
@@ -16,8 +17,15 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/issues" element={<IssueList />} />
         <Route path="/map" element={<IssueMap />} />
-        <Route path="/report" element={<ReportIssue />} />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/report"
+          element={
+            <ProtectedRoute>
+              <ReportIssue />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   )
