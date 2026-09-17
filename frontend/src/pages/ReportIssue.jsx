@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as reportsApi from '../services/reportsApi'
+import LocationPicker from '../components/LocationPicker'
 
 function ReportIssue() {
   const [categories, setCategories] = useState([])
@@ -32,6 +33,13 @@ function ReportIssue() {
     e.preventDefault()
     setError('')
     setLoading(true)
+
+    if (!formData.latitude || !formData.longitude) {
+      setError('Please select a location on the map.')
+      setLoading(false)
+      return
+    }
+
     try {
       await reportsApi.createReport(formData)
       navigate('/my-reports')
@@ -109,7 +117,7 @@ function ReportIssue() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Location description (optional for now)</label>
+          <label className="form-label">Location description (optional)</label>
           <input
             type="text"
             name="location_description"
@@ -120,37 +128,13 @@ function ReportIssue() {
           />
         </div>
 
-        <div className="row mb-3">
-          <div className="col">
-            <label className="form-label">Latitude</label>
-            <input
-              type="number"
-              step="any"
-              name="latitude"
-              className="form-control"
-              value={formData.latitude}
-              onChange={handleChange}
-              placeholder="-1.286389"
-              required
-            />
-          </div>
-          <div className="col">
-            <label className="form-label">Longitude</label>
-            <input
-              type="number"
-              step="any"
-              name="longitude"
-              className="form-control"
-              value={formData.longitude}
-              onChange={handleChange}
-              placeholder="36.817223"
-              required
-            />
-          </div>
+        <div className="mb-3">
+          <LocationPicker
+            latitude={formData.latitude}
+            longitude={formData.longitude}
+            onChange={(lat, lng) => setFormData({ ...formData, latitude: lat, longitude: lng })}
+          />
         </div>
-        <p className="text-muted small">
-          We'll replace these with an interactive map picker in the next step.
-        </p>
 
         <button type="submit" className="btn btn-primary" disabled={loading}>
           {loading ? 'Submitting...' : 'Submit Report'}
