@@ -14,6 +14,8 @@ function ReportIssue() {
     longitude: '',
     location_description: '',
   })
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -29,6 +31,33 @@ function ReportIssue() {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) {
+      setImageFile(null)
+      setImagePreview(null)
+      return
+    }
+
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!validTypes.includes(file.type)) {
+      setError('Please upload a JPEG, PNG, or WebP image.')
+      e.target.value = ''
+      return
+    }
+
+    const maxSizeMB = 5
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      setError(`Image must be smaller than ${maxSizeMB}MB.`)
+      e.target.value = ''
+      return
+    }
+
+    setError('')
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -40,8 +69,16 @@ function ReportIssue() {
       return
     }
 
+    const payload = new FormData()
+    Object.entries(formData).forEach(([key, value]) => {
+      payload.append(key, value)
+    })
+    if (imageFile) {
+      payload.append('image', imageFile)
+    }
+
     try {
-      await reportsApi.createReport(formData)
+      await reportsApi.createReport(payload)
       navigate('/my-reports')
     } catch (err) {
       const data = err.response?.data
@@ -134,6 +171,24 @@ function ReportIssue() {
             longitude={formData.longitude}
             onChange={(lat, lng) => setFormData({ ...formData, latitude: lat, longitude: lng })}
           />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Photo (optional)</label>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="form-control"
+            onChange={handleImageChange}
+          />
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="mt-2 rounded"
+              style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'cover' }}
+            />
+          )}
         </div>
 
         <button type="submit" className="btn btn-primary" disabled={loading}>
