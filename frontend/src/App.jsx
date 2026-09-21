@@ -8,6 +8,7 @@ import ReportIssue from './pages/ReportIssue'
 import Register from './pages/Register'
 import ProtectedRoute from './components/ProtectedRoute'
 import MyReports from './pages/MyReports'
+import IssueDetail from './pages/IssueDetail'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/issues" element={<IssueList />} />
         <Route path="/map" element={<IssueMap />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/issues/:id" element={<IssueDetail />} />
         <Route
           path="/report"
           element={

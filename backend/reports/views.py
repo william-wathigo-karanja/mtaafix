@@ -39,6 +39,28 @@ class ReportViewSet(viewsets.ModelViewSet):
             return ReportListSerializer
         return ReportDetailSerializer
 
+    def get_queryset(self):
+        queryset = Report.objects.all()
+        params = self.request.query_params
+
+        category = params.get('category')
+        if category:
+            queryset = queryset.filter(category_id=category)
+
+        status_param = params.get('status')
+        if status_param:
+            queryset = queryset.filter(status=status_param)
+
+        priority = params.get('priority')
+        if priority:
+            queryset = queryset.filter(priority=priority)
+
+        reported_by = params.get('reported_by')
+        if reported_by == 'me' and self.request.user.is_authenticated:
+            queryset = queryset.filter(reported_by=self.request.user)
+
+        return queryset
+
     def perform_create(self, serializer):
         serializer.save(reported_by=self.request.user)
 
@@ -75,5 +97,3 @@ class ReportViewSet(viewsets.ModelViewSet):
 
         serializer = ReportDetailSerializer(report)
         return Response(serializer.data)
-
-   
