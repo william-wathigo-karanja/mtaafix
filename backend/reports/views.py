@@ -10,7 +10,12 @@ from .serializers import CategorySerializer, ReportListSerializer, ReportDetailS
 
 
 class IsOwnerOrAdminOrReadOnly(permissions.BasePermission):
-    """Anyone can read. Only the report's owner or an admin can modify it."""
+    """Anyone can read. Only authenticated users can write; only the report's owner or an admin can modify it."""
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
