@@ -23,6 +23,7 @@ function AdminDashboard() {
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Admin Dashboard</h2>
+      <Link to="/admin/reports" className="btn btn-outline-primary mb-4">Manage Reports →</Link>
 
       <div className="row g-3 mb-5">
         <StatCard label="Total Issues" value={stats.total_issues} color="dark" />

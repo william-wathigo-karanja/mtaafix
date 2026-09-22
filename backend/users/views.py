@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import RegisterSerializer, UserSerializer
@@ -48,3 +49,14 @@ class MeView(generics.RetrieveAPIView):
 
     def get_object(self):
         return request.user if (request := self.request) else None
+
+
+class UserListView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = User.objects.all().order_by('username')
+
+    def get_queryset(self):
+        if self.request.user.role != 'admin':
+            raise PermissionDenied('Only admins can list users.')
+        return super().get_queryset()

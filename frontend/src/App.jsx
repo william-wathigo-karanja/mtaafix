@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import MyReports from './pages/MyReports'
 import IssueDetail from './pages/IssueDetail'
 import AdminDashboard from './pages/AdminDashboard'
+import AdminReports from './pages/AdminReports'
 
 function App() {
   return (
@@ -43,6 +44,14 @@ function App() {
           element={
             <ProtectedRoute adminOnly>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reports"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdminReports />
             </ProtectedRoute>
           }
         />
