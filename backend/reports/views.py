@@ -1,7 +1,10 @@
 from django.utils import timezone
+from django.db.models import Count
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from .models import Category, Report, StatusHistory
 from .serializers import CategorySerializer, ReportListSerializer, ReportDetailSerializer
 
@@ -97,3 +100,34 @@ class ReportViewSet(viewsets.ModelViewSet):
 
         serializer = ReportDetailSerializer(report)
         return Response(serializer.data)
+
+
+class DashboardStatisticsView(APIView):
+    permission_classes = [IsAdminOrOfficer]
+
+    def get(self, request):
+        total = Report.objects.count()
+        by_status = dict(
+            Report.objects.values_list('status').annotate(count=Count('id')).order_by()
+        )
+        by_category = list(
+            Report.objects.values('category__name')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+        critical_count = Report.objects.filter(priority=Report.Priority.CRITICAL).count()
+
+        recent = Report.objects.order_by('-created_at')[:5]
+        recent_data = ReportListSerializer(recent, many=True).data
+
+        return Response({
+            'total_issues': total,
+            'open_issues': by_status.get('reported', 0) + by_status.get('under_review', 0),
+            'assigned_issues': by_status.get('assigned', 0),
+            'in_progress_issues': by_status.get('in_progress', 0),
+            'resolved_issues': by_status.get('resolved', 0),
+            'rejected_issues': by_status.get('rejected', 0),
+            'critical_issues': critical_count,
+            'by_category': by_category,
+            'recent_reports': recent_data,
+        })
