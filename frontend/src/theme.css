@@ -1,0 +1,73 @@
+:root {
+  --bs-primary: #046A38;
+  --bs-primary-rgb: 4, 106, 56;
+  --bs-secondary: #1a1a1a;
+  --bs-secondary-rgb: 26, 26, 26;
+  --bs-danger: #C8102E;
+  --bs-danger-rgb: 200, 16, 46;
+  --bs-success: #046A38;
+  --bs-success-rgb: 4, 106, 56;
+  --bs-body-bg: #FAF8F3;
+  --bs-body-font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bs-link-color: #046A38;
+  --bs-link-hover-color: #035229;
+}
+
+body {
+  font-family: var(--bs-body-font-family);
+}
+
+.navbar-dark.bg-dark {
+  background-color: var(--bs-secondary) !important;
+  border-bottom: 3px solid var(--bs-primary);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: #035229;
+  --bs-btn-hover-border-color: #035229;
+}
+
+.card {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.flag-stripe {
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    #000 0%, #000 25%,
+    #C8102E 25%, #C8102E 50%,
+    #046A38 50%, #046A38 75%,
+    #fff 75%, #fff 100%
+  );
+}
+
+.step-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--bs-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--bs-primary);
+  line-height: 1;
+}
