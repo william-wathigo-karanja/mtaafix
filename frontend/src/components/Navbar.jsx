@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Logo from './Logo'
 
 function Navbar() {
   const { user, logoutUser } = useAuth()
@@ -20,7 +21,12 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <Link className="navbar-brand fw-bold" to="/" onClick={closeMenu}>
+        <Link
+          className="navbar-brand fw-bold d-flex align-items-center gap-2"
+          to="/"
+          onClick={closeMenu}
+        >
+          <Logo />
           MtaaFix
         </Link>
 

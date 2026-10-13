@@ -1,0 +1,27 @@
+function Logo({ size = 28 }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <rect width="32" height="32" rx="7" fill="#046A38" />
+      <path
+        d="M16 6c-4.4 0-8 3.4-8 7.6 0 5.6 8 12.4 8 12.4s8-6.8 8-12.4C24 9.4 20.4 6 16 6z"
+        fill="#fff"
+      />
+      <path
+        d="M12.5 13.5l2.6 2.6 4.6-4.9"
+        fill="none"
+        stroke="#046A38"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+export default Logo

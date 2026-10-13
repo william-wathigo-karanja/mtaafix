@@ -42,7 +42,8 @@ function Home() {
 
       <div className="container py-5 text-center" style={{ maxWidth: '640px' }}>
         <h1 className="fw-bold mb-2" style={{ color: 'var(--bs-secondary)' }}>MtaaFix</h1>
-        <p className="fs-4 mb-3" style={{ color: 'var(--bs-primary)' }}>Report. Track. Improve.</p>
+        <p className="fs-4 mb-1" style={{ color: 'var(--bs-primary)' }}>Report. Track. Improve.</p>
+        <p className="text-muted fst-italic mb-3">Ripoti. Fuatilia. Boresha.</p>
         <p className="text-muted mb-4">
           Help make your community better by reporting local problems that need attention:
           potholes, blocked drains, broken streetlights, and more.
