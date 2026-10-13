@@ -27,6 +27,64 @@ const STATUS_LABELS = {
   rejected: 'Rejected',
 }
 
+const STAGES = [
+  { key: 'reported', text: 'Report received' },
+  { key: 'under_review', text: 'Being reviewed by the team' },
+  { key: 'assigned', text: 'Assigned to someone to handle' },
+  { key: 'in_progress', text: 'Work has started' },
+  { key: 'resolved', text: 'The issue has been fixed' },
+]
+
+const formatDateTime = (value) =>
+  new Date(value).toLocaleString('en-KE', { dateStyle: 'medium', timeStyle: 'short' })
+
+function StatusStepper({ report }) {
+  const history = report.status_history || []
+
+  // latest time the report entered a given stage (null if it never did)
+  const dateFor = (stage) => {
+    if (stage === 'reported') return report.created_at
+    const entry = [...history].reverse().find((e) => e.new_status === stage)
+    return entry ? entry.created_at : null
+  }
+
+  if (report.status === 'rejected') {
+    const entry = [...history].reverse().find((e) => e.new_status === 'rejected')
+    return (
+      <div className="alert alert-danger mb-0">
+        <strong>This report was rejected.</strong> It was judged invalid or outside the scope of
+        this platform.
+        {entry && <div className="small mt-1">{formatDateTime(entry.created_at)}</div>}
+      </div>
+    )
+  }
+
+  const currentIndex = STAGES.findIndex((s) => s.key === report.status)
+
+  return (
+    <ol className="status-stepper">
+      {STAGES.map((stage, index) => {
+        const state = index < currentIndex ? 'done' : index === currentIndex ? 'current' : 'pending'
+        const date = dateFor(stage.key)
+        return (
+          <li
+            key={stage.key}
+            className={`status-step ${state}`}
+            aria-current={state === 'current' ? 'step' : undefined}
+          >
+            <span className="status-dot">{state === 'done' ? '✓' : index + 1}</span>
+            <div className="fw-semibold">{STATUS_LABELS[stage.key]}</div>
+            <div className="small text-muted">{stage.text}</div>
+            {date && state !== 'pending' && (
+              <div className="small text-muted">{formatDateTime(date)}</div>
+            )}
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
 function IssueDetail() {
   const { id } = useParams()
   const [report, setReport] = useState(null)
@@ -56,7 +114,7 @@ function IssueDetail() {
   }
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '700px' }}>
+    <div className="container mt-5 mb-5" style={{ maxWidth: '700px' }}>
       <Link to="/issues" className="d-inline-block mb-3">← Back to Issues</Link>
 
       {report.image && (
@@ -93,29 +151,13 @@ function IssueDetail() {
 
       <p className="text-muted small">
         Reported by {report.reported_by_username} on{' '}
-        {new Date(report.created_at).toLocaleDateString()}
+        {new Date(report.created_at).toLocaleDateString('en-KE')}
       </p>
 
       <hr />
 
-      <h5>Status Timeline</h5>
-      {report.status_history && report.status_history.length > 0 ? (
-        <ul className="list-group">
-          {report.status_history.map((entry) => (
-            <li key={entry.id} className="list-group-item">
-              <strong>{STATUS_LABELS[entry.old_status] || entry.old_status || 'Created'}</strong>
-              {' → '}
-              <strong>{STATUS_LABELS[entry.new_status] || entry.new_status}</strong>
-              <div className="text-muted small">
-                {new Date(entry.created_at).toLocaleString()}
-                {entry.changed_by_name && ` · by ${entry.changed_by_name}`}
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-muted">No status changes yet — still at "Reported."</p>
-      )}
+      <h5 className="mb-3">Progress</h5>
+      <StatusStepper report={report} />
     </div>
   )
 }
