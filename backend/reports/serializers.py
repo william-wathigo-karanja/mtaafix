@@ -17,14 +17,15 @@ class StatusHistorySerializer(serializers.ModelSerializer):
 
 
 class ReportListSerializer(serializers.ModelSerializer):
-    """Lightweight serializer for list views — no internal notes, minimal reporter info."""
+    """Lightweight serializer for list views: no internal notes, minimal reporter info."""
     category_name = serializers.CharField(source='category.name', read_only=True)
 
     class Meta:
         model = Report
         fields = [
             'id', 'title', 'category', 'category_name', 'priority', 'status',
-            'latitude', 'longitude', 'location_description', 'image', 'created_at',
+            'latitude', 'longitude', 'location_description', 'image', 'assigned_to',
+            'created_at',
         ]
 
 

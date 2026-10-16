@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.db.models import Count
 from rest_framework import viewsets, permissions, status
@@ -7,6 +8,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Category, Report, StatusHistory
 from .serializers import CategorySerializer, ReportListSerializer, ReportDetailSerializer
+
+User = get_user_model()
 
 
 class IsOwnerOrAdminOrReadOnly(permissions.BasePermission):
@@ -32,10 +35,19 @@ class IsAdminOrOfficer(permissions.BasePermission):
         return request.user.is_authenticated and request.user.role in ('admin', 'officer')
 
 
+class IsAdminOrReadOnly(permissions.BasePermission):
+    """Anyone can read. Only admins can create, edit or delete."""
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.is_authenticated and request.user.role == 'admin'
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class ReportViewSet(viewsets.ModelViewSet):
@@ -105,6 +117,25 @@ class ReportViewSet(viewsets.ModelViewSet):
 
         serializer = ReportDetailSerializer(report)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['patch'], permission_classes=[IsAdminOrOfficer])
+    def assign(self, request, pk=None):
+        report = self.get_object()
+        user_id = request.data.get('assigned_to')
+
+        if user_id in (None, ''):
+            report.assigned_to = None
+        else:
+            try:
+                report.assigned_to = User.objects.get(pk=user_id, role__in=['admin', 'officer'])
+            except (User.DoesNotExist, ValueError, TypeError):
+                return Response(
+                    {'detail': 'Choose a valid staff member (admin or officer).'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        report.save()
+        return Response(ReportDetailSerializer(report).data)
 
 
 class DashboardStatisticsView(APIView):

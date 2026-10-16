@@ -142,9 +142,11 @@ function AdminReports() {
                       onChange={(e) => handleAssign(report.id, e.target.value)}
                     >
                       <option value="">Unassigned</option>
-                      {users.map((u) => (
-                        <option key={u.id} value={u.id}>{u.username}</option>
-                      ))}
+                      {users
+                       .filter((u) => ['admin', 'officer'].includes(u.role))
+                       .map((u) => (
+                          <option key={u.id} value={u.id}>{u.username}</option>
+                       ))}
                     </select>
                   </td>
                 </tr>
